@@ -1,6 +1,6 @@
 package dev.insideyou.playground.domain.model.error
 
-sealed trait BusinessError
+sealed trait BusinessError extends Throwable
 
 object BusinessError {
   final case class MessageAlreadyExistsError(id: String) extends BusinessError

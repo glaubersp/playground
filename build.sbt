@@ -1,4 +1,4 @@
-import Dependencies._
+import Dependencies.{ org, _ }
 
 ThisBuild / organization := "dev.insideyou"
 ThisBuild / scalaVersion := "2.13.6"
@@ -9,6 +9,7 @@ lazy val `playground` =
     .settings(name := "playground")
     .settings(commonSettings)
     .settings(dependencies)
+    .settings(resolvers += Resolver.sonatypeRepo("snapshots"))
 
 lazy val commonSettings = Seq(
   addCompilerPlugin(com.olegpy.betterMonadicFor),
@@ -31,8 +32,15 @@ lazy val dependencies = Seq(
     // main dependencies
     dev.zio.zio,
     dev.zio.zioTest,
-    dev.zio.zioMacros
+    dev.zio.zioInteropCats,
+    org.http4s.http4SCore,
+    org.http4s.http4SCirce,
+    org.http4s.http4SDsl,
+    org.http4s.http4SBlazeClient,
+    org.http4s.http4SBlazeServer,
+    com.github.pureconfig.pureconfig
   ),
+  libraryDependencies ++= Dependencies.io.circle.circeAll,
   libraryDependencies ++= Seq(
     com.github.alexarchambault.scalacheckShapeless_1_15,
     org.scalacheck.scalacheck,

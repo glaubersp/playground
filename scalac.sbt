@@ -6,7 +6,6 @@ ThisBuild / scalacOptions ++= Seq(
   "-Wunused:imports" // always on for OrganizeImports
 ) ++ Seq("-encoding", "UTF-8") ++ warnings.value ++ lint.value
 
-ThisBuild / insideCI := false
 ThisBuild / warnings := {
   if (insideCI.value)
     Seq(
@@ -36,17 +35,19 @@ ThisBuild / wartremoverWarnings := {
   if (shouldLint.value)
 //    Warts.allBut(
 //      Wart.ImplicitConversion,
-//      Wart.ImplicitParameter,
+//      Wart.ImplicitParameter
 //    )
     Warts.allBut(
       Wart.Any,
       Wart.Nothing,
       Wart.Serializable,
+      Wart.JavaSerializable,
       Wart.AnyVal,
       Wart.StringPlusAny,
       Wart.PlatformDefault,
       Wart.Overloading,
-      Wart.Recursion
+      Wart.Recursion,
+      Wart.Null
     )
   else
     (ThisBuild / wartremoverWarnings).value

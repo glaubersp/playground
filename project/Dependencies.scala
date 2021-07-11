@@ -11,6 +11,9 @@ object Dependencies {
       case object alexarchambault {
         val scalacheckShapeless_1_15 =
           "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % "1.3.0"
+      }
+
+      case object pureconfig {
         val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.16.0"
       }
 
@@ -34,8 +37,7 @@ object Dependencies {
     case object zio {
       val zio = "dev.zio" %% "zio" % "1.0.9"
       val zioInteropCats =
-        ("dev.zio" %% "zio-interop-cats" % "2.5.1.0").excludeAll(ExclusionRule("dev.zio"))
-      val zioMacros = "dev.zio" %% "zio-macros" % "1.0.9"
+        ("dev.zio" %% "zio-interop-cats" % "3.1.1.0").excludeAll(ExclusionRule("dev.zio"))
       val zioTest = "dev.zio" %% "zio-test" % "1.0.9" % "test"
       val zioTestSbt = "dev.zio" %% "zio-test-sbt" % "1.0.9" % "test"
     }
@@ -43,11 +45,12 @@ object Dependencies {
 
   case object io {
     case object circle {
-      val circeGeneric = "io.circe" %% "circe-generic" % "0.14.1"
       val circeCore = "io.circe" %% "circe-core" % "0.14.1"
+      val circeLiteral = "io.circe" %% "circe-literal" % "0.14.1"
       val circeParser = "io.circe" %% "circe-parser" % "0.14.1"
-      val circeExtras = "io.circe" %% "circe-generic-extras" % "0.14.1"
-      val circe = List(circeGeneric, circeCore, circeParser, circeExtras)
+      val circeGeneric = "io.circe" %% "circe-generic" % "0.14.1"
+      val circeGenericExtras = "io.circe" %% "circe-generic-extras" % "0.14.1"
+      val circeAll = List(circeGeneric, circeCore, circeParser, circeGenericExtras, circeLiteral)
     }
   }
 
@@ -65,6 +68,15 @@ object Dependencies {
       val flyway = "org.flywaydb" % "flyway-core" % "7.11.1"
     }
 
+    case object http4s {
+      val http4SCore = "org.http4s" %% "http4s-core" % "0.23.0-RC1"
+      val http4SCirce = "org.http4s" %% "http4s-circe" % "0.23.0-RC1"
+      val http4SDsl = "org.http4s" %% "http4s-dsl" % "0.23.0-RC1"
+      val http4SBlazeServer = "org.http4s" %% "http4s-blaze-server" % "0.23.0-RC1"
+      val http4SBlazeClient = "org.http4s" %% "http4s-blaze-client" % "0.23.0-RC1"
+      val http4SJdkHttpClient = "org.http4s" %% "http4s-jdk-http-client" % "0.3.7"
+
+    }
     case object scalacheck {
       val scalacheck =
         "org.scalacheck" %% "scalacheck" % "1.15.4"

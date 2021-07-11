@@ -1,20 +1,17 @@
 package dev.insideyou.playground.infrastructure.ui
 
-import zio._
-import zio.console._
-
-import dev.insideyou.playground.domain.model.MessageRepository
 import dev.insideyou.playground.domain.model.MessageRepository.MessageRepository
 import dev.insideyou.playground.infrastructure.controller.CRUDOperation._
 import dev.insideyou.playground.infrastructure.controller._
-import dev.insideyou.playground.infrastructure.environments.MessageRepositoryEnv
+import dev.insideyou.playground.infrastructure.environments.InMemoryMessageRepositoryEnv
+import zio._
+import zio.console._
 
 object ConsoleUI {
   type ConsoleApplicationEnvironment = Console with MessageRepository
 
-  val consoleApplicationEnvironment
-      : ZLayer[Any, Nothing, Console with Has[MessageRepository.Service]] =
-    Console.live ++ MessageRepositoryEnv.inMemory
+  val consoleApplicationEnvironment: ZLayer[Any, Nothing, Console with MessageRepository] =
+    Console.live ++ InMemoryMessageRepositoryEnv.live
 
   val consoleUIExecution: IO[Nothing, Int] =
     consoleProgram().provideLayer(consoleApplicationEnvironment)
@@ -49,11 +46,11 @@ object ConsoleUI {
 
   private def dispatch(operation: CRUDOperation): ZIO[Console with MessageRepository, Any, Any] =
     operation match {
-      case Create  => MessageController.create
-      case Read    => MessageController.read
-      case Update  => MessageController.update
-      case Delete  => MessageController.delete
-      case GetAll  => MessageController.getAll
+      case Create  => MessageConsoleController.create
+      case Read    => MessageConsoleController.read
+      case Update  => MessageConsoleController.update
+      case Delete  => MessageConsoleController.delete
+      case GetAll  => MessageConsoleController.getAll
       case ExitApp => ZIO.fail("How did I get here?")
     }
 }

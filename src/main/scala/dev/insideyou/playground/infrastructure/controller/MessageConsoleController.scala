@@ -8,7 +8,7 @@ import dev.insideyou.playground.domain.model.MessageRepository.MessageRepository
 import dev.insideyou.playground.domain.service.MessageService
 import dev.insideyou.playground.domain.service.MessageService._
 
-object MessageController {
+object MessageConsoleController {
   val create: ZIO[Console with MessageRepository, Any, Message] =
     for {
       _ <- putStrLn("Please type your message:")
