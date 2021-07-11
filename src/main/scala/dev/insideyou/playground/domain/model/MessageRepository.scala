@@ -7,7 +7,6 @@ object MessageRepository {
 
   type MessageRepository = Has[MessageRepository.Service]
 
-  //TODO: Extract to IMPL class with 2 different implementations
   def save(
       twitterMessage: Message
     ): ZIO[MessageRepository, PersistenceError, Message] =

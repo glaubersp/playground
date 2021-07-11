@@ -1,22 +1,19 @@
 package dev.insideyou.playground.infrastructure.ui
 
-import dev.insideyou.playground.domain.model.MessageRepository.MessageRepository
 import dev.insideyou.playground.infrastructure.controller.CRUDOperation._
+import dev.insideyou.playground.infrastructure.controller.MessageConsoleController.{
+  ConsoleApplicationEnvironment,
+  consoleApplicationEnvironment
+}
 import dev.insideyou.playground.infrastructure.controller._
-import dev.insideyou.playground.infrastructure.environments.InMemoryMessageRepositoryEnv
 import zio._
 import zio.console._
 
 object ConsoleUI {
-  type ConsoleApplicationEnvironment = Console with MessageRepository
-
-  val consoleApplicationEnvironment: ZLayer[Any, Nothing, Console with MessageRepository] =
-    Console.live ++ InMemoryMessageRepositoryEnv.live
-
-  val consoleUIExecution: IO[Nothing, Int] =
+  val consoleUIProgram: IO[Nothing, Int] =
     consoleProgram().provideLayer(consoleApplicationEnvironment)
 
-  def consoleProgram(): ZIO[ConsoleApplicationEnvironment, Nothing, Int] =
+  private def consoleProgram(): ZIO[ConsoleApplicationEnvironment, Nothing, Int] =
     (for {
       _ <- putStrLn("Please select next operation to perform:")
       _ <- putStrLn(s"${Create.index} for Create") *> putStrLn(
@@ -44,7 +41,7 @@ object ConsoleUI {
       }
     } yield 0).tapError(e => putStrLn(s"Unexpected Failure $e")) orElse ZIO.succeed(1)
 
-  private def dispatch(operation: CRUDOperation): ZIO[Console with MessageRepository, Any, Any] =
+  private def dispatch(operation: CRUDOperation): ZIO[ConsoleApplicationEnvironment, Any, Any] =
     operation match {
       case Create  => MessageConsoleController.create
       case Read    => MessageConsoleController.read
