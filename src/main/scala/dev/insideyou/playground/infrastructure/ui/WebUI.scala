@@ -2,6 +2,7 @@ package dev.insideyou.playground.infrastructure.ui
 
 import cats.data.Kleisli
 import dev.insideyou.playground.domain.model.MessageRepository.MessageRepository
+import dev.insideyou.playground.domain.service.MessageService
 import dev.insideyou.playground.domain.service.MessageService.ComposeMessageRequest
 import dev.insideyou.playground.infrastructure.environments.InMemoryMessageRepositoryEnv
 import io.circe.generic.auto._
@@ -45,14 +46,26 @@ object WebUI {
   }
   private val messageRoutes: HttpRoutes[Task] = HttpRoutes
     .of[Task] {
-      case GET -> Root / IntVar(messageId) =>
-        Ok(messageId.toString)
+      case GET -> Root / messageId =>
+        MessageService
+          .getMessage(messageId)
+          .flatMap {
+            case Some(value) => Ok(value)
+            case None        => NoContent()
+          }
+          .provideLayer(webApplicationEnvironment)
       case GET -> Root =>
-        Ok("All")
+        MessageService
+          .getAllMessages
+          .foldM(x => RIO.dieMessage(x.getMessage), messages => Ok(messages))
+          .provideLayer(webApplicationEnvironment)
       case req @ POST -> Root =>
         req
           .decode[ComposeMessageRequest] { messageRequest =>
-            Ok(messageRequest.content)
+            MessageService
+              .storeMessage(messageRequest)
+              .foldM(x => RIO.dieMessage(x.getMessage), message => Ok(message))
+              .provideLayer(webApplicationEnvironment)
           }
     }
   private val mainApp: Kleisli[Task, Request[Task], Response[Task]] = Router[Task](
