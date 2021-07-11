@@ -4,16 +4,16 @@ import dev.insideyou.playground.domain.model.MessageRepository.MessageRepository
 import dev.insideyou.playground.domain.model._
 import dev.insideyou.playground.domain.model.error.BusinessError._
 import dev.insideyou.playground.domain.model.error.ValidationError.InvalidInputError
-import zio.ZIO
+import zio.RIO
 
 object MessageService {
 
-  def storeMessage(request: ComposeMessageRequest): ZIO[MessageRepository, Throwable, Message] =
+  def storeMessage(request: ComposeMessageRequest): RIO[MessageRepository, Message] =
     Message(content = request.content) match {
-      case None => ZIO.fail(InvalidInputError(request.content))
+      case None => RIO.fail(InvalidInputError(request.content))
       case Some(message) =>
         MessageRepository.get(message.id).flatMap {
-          case Some(_) => ZIO.fail(MessageAlreadyExistsError(message.id))
+          case Some(_) => RIO.fail(MessageAlreadyExistsError(message.id))
           case None    => MessageRepository.save(message)
         }
     }
@@ -21,14 +21,14 @@ object MessageService {
   //TODO: Improve Error type
   def updateMessage(
       request: UpdateMessageRequest
-    ): ZIO[MessageRepository, Throwable, Message] =
+    ): RIO[MessageRepository, Message] =
     for {
       oldMessage <- Message(content = request.content) match {
-        case None => ZIO.fail(InvalidInputError(request.content))
+        case None => RIO.fail(InvalidInputError(request.content))
         case Some(_) =>
           MessageRepository.get(request.id).flatMap {
-            case None          => ZIO.fail(MessageDoesNotExistError(request.content))
-            case Some(message) => ZIO.succeed(message)
+            case None          => RIO.fail(MessageDoesNotExistError(request.content))
+            case Some(message) => RIO.succeed(message)
           }
       }
       updatedMessage <- MessageRepository
@@ -36,13 +36,13 @@ object MessageService {
         .orElseFail(InternalError(""))
     } yield updatedMessage
 
-  def getMessage(id: String): ZIO[MessageRepository, Throwable, Option[Message]] =
+  def getMessage(id: String): RIO[MessageRepository, Option[Message]] =
     MessageRepository.get(id)
 
-  def getAllMessages: ZIO[MessageRepository, Throwable, Seq[Message]] =
+  def getAllMessages: RIO[MessageRepository, Seq[Message]] =
     MessageRepository.getAll
 
-  def deleteMessage(id: String): ZIO[MessageRepository, Throwable, Option[Message]] =
+  def deleteMessage(id: String): RIO[MessageRepository, Option[Message]] =
     MessageRepository.delete(id)
 
   final case class ComposeMessageRequest(content: String)
