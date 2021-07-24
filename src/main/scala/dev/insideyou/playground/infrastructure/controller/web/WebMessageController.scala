@@ -1,23 +1,22 @@
-package dev.insideyou.playground.infrastructure.controller
+package dev.insideyou.playground.infrastructure.controller.web
 
-import dev.insideyou.playground.domain.model.MessageRepository.MessageRepository
-import dev.insideyou.playground.domain.service.MessageService
-import dev.insideyou.playground.domain.service.MessageService.ComposeMessageRequest
-import dev.insideyou.playground.infrastructure.environments.InMemoryMessageRepositoryEnv
 import io.circe.generic.auto._
 import org.http4s.HttpRoutes
-import org.http4s.circe.CirceEntityDecoder._
-import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.dsl.Http4sDsl
+import zio._
 import zio.interop.catz._
-import zio.interop.catz.implicits._
-import zio.{ Task, ZLayer }
 
-object MessageWebController {
-  type WebApplicationEnvironment = MessageRepository
+import dev.insideyou.playground.domain.service.MessageService
+import dev.insideyou.playground.domain.service.MessageService.ComposeMessageRequest
+import dev.insideyou.playground.infrastructure.controller.web.WebUI._
+import dev.insideyou.playground.infrastructure.persistence.MessageRepository
 
-  val webApplicationEnvironment: ZLayer[Any, Throwable, WebApplicationEnvironment] =
-    InMemoryMessageRepositoryEnv.live
+object WebMessageController {
+
+  type WebApplicationEnvironment = Has[MessageRepository]
+
+  val webApplicationEnvironment: ULayer[WebApplicationEnvironment] =
+    MessageRepository.live
 
   val dsl: Http4sDsl[Task] = Http4sDsl[Task]
   import dsl._

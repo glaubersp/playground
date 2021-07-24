@@ -1,17 +1,17 @@
-package dev.insideyou.playground.infrastructure.controller
+package dev.insideyou.playground.infrastructure.controller.console
 
-import dev.insideyou.playground.domain.model.Message
-import dev.insideyou.playground.domain.model.MessageRepository.MessageRepository
-import dev.insideyou.playground.domain.service.MessageService
-import dev.insideyou.playground.domain.service.MessageService._
-import dev.insideyou.playground.infrastructure.environments.InMemoryMessageRepositoryEnv
 import zio._
 import zio.console._
 
-object MessageConsoleController {
-  type ConsoleApplicationEnvironment = Console with MessageRepository
-  val consoleApplicationEnvironment: ZLayer[Any, Nothing, Console with MessageRepository] =
-    Console.live ++ InMemoryMessageRepositoryEnv.live
+import dev.insideyou.playground.domain.model.Message
+import dev.insideyou.playground.domain.service.MessageService
+import dev.insideyou.playground.domain.service.MessageService._
+import dev.insideyou.playground.infrastructure.persistence.MessageRepository
+
+object ConsoleMessageController {
+  type ConsoleApplicationEnvironment = Console with Has[MessageRepository]
+  val consoleApplicationEnvironment: ZLayer[Any, Nothing, Console with Has[MessageRepository]] =
+    Console.live ++ MessageRepository.live
 
   val create: RIO[ConsoleApplicationEnvironment, Message] =
     for {

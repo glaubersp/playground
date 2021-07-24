@@ -1,18 +1,15 @@
 package dev.insideyou.playground.domain.service
 
-import dev.insideyou.playground.domain.model.MessageRepository.MessageRepository
+import zio._
+
 import dev.insideyou.playground.domain.model._
-import dev.insideyou.playground.domain.model.error.BusinessError.{
-  InternalError,
-  MessageAlreadyExistsError,
-  MessageDoesNotExistError
-}
+import dev.insideyou.playground.domain.model.error.BusinessError._
 import dev.insideyou.playground.domain.model.error.ValidationError.InvalidInputError
-import zio.{ RIO, ZIO }
+import dev.insideyou.playground.infrastructure.persistence.MessageRepository
 
 object MessageService {
 
-  def storeMessage(request: ComposeMessageRequest): RIO[MessageRepository, Message] =
+  def storeMessage(request: ComposeMessageRequest): RIO[Has[MessageRepository], Message] =
     Message(content = request.content) match {
       case None => ZIO.fail(InvalidInputError(s"Invalid Input: ${request.content}"))
       case Some(message) =>
@@ -25,7 +22,7 @@ object MessageService {
 
   def updateMessage(
       request: UpdateMessageRequest
-    ): RIO[MessageRepository, Message] =
+    ): RIO[Has[MessageRepository], Message] =
     for {
       oldMessage <- Message(content = request.content) match {
         case None => RIO.fail(InvalidInputError(s"Invalid Input: ${request.content}"))
@@ -41,13 +38,13 @@ object MessageService {
         .orElseFail(InternalError("Error updating message."))
     } yield updatedMessage
 
-  def getMessage(id: String): RIO[MessageRepository, Option[Message]] =
+  def getMessage(id: String): RIO[Has[MessageRepository], Option[Message]] =
     MessageRepository.get(id)
 
-  def getAllMessages: RIO[MessageRepository, Seq[Message]] =
+  def getAllMessages: RIO[Has[MessageRepository], Seq[Message]] =
     MessageRepository.getAll
 
-  def deleteMessage(id: String): RIO[MessageRepository, Option[Message]] =
+  def deleteMessage(id: String): RIO[Has[MessageRepository], Option[Message]] =
     MessageRepository.delete(id)
 
   final case class ComposeMessageRequest(content: String)

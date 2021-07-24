@@ -1,10 +1,10 @@
 import sbt._
 
 object Dependencies {
-
-  case object co {
-    val fs2Core = "co.fs2" %% "fs2-core" % "2.5.9"
-  }
+//
+//  case object co {
+//    val fs2Core = "co.fs2" %% "fs2-core" % "2.5.9"
+//  }
 
   case object com {
     case object github {
@@ -37,7 +37,7 @@ object Dependencies {
     case object zio {
       val zio = "dev.zio" %% "zio" % "1.0.9"
       val zioInteropCats =
-        ("dev.zio" %% "zio-interop-cats" % "3.1.1.0").excludeAll(ExclusionRule("dev.zio"))
+        ("dev.zio" %% "zio-interop-cats" % "2.5.1.0").excludeAll(ExclusionRule("dev.zio"))
       val zioTest = "dev.zio" %% "zio-test" % "1.0.9" % "test"
       val zioTestSbt = "dev.zio" %% "zio-test-sbt" % "1.0.9" % "test"
     }
@@ -69,11 +69,11 @@ object Dependencies {
     }
 
     case object http4s {
-      val http4SCore = "org.http4s" %% "http4s-core" % "0.23.0-RC1"
-      val http4SCirce = "org.http4s" %% "http4s-circe" % "0.23.0-RC1"
-      val http4SDsl = "org.http4s" %% "http4s-dsl" % "0.23.0-RC1"
-      val http4SBlazeServer = "org.http4s" %% "http4s-blaze-server" % "0.23.0-RC1"
-      val http4SBlazeClient = "org.http4s" %% "http4s-blaze-client" % "0.23.0-RC1"
+      val http4SCore = "org.http4s" %% "http4s-core" % "0.21.25"
+      val http4SCirce = "org.http4s" %% "http4s-circe" % "0.21.25"
+      val http4SDsl = "org.http4s" %% "http4s-dsl" % "0.21.25"
+      val http4SBlazeServer = "org.http4s" %% "http4s-blaze-server" % "0.21.25"
+      val http4SBlazeClient = "org.http4s" %% "http4s-blaze-client" % "0.21.25"
       val http4SJdkHttpClient = "org.http4s" %% "http4s-jdk-http-client" % "0.3.7"
 
     }

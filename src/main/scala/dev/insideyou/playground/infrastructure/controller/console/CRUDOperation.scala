@@ -1,4 +1,4 @@
-package dev.insideyou.playground.infrastructure.controller
+package dev.insideyou.playground.infrastructure.controller.console
 
 import scala.util.Try
 
