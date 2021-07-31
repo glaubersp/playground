@@ -2,12 +2,15 @@ package dev.insideyou.playground.infrastructure.controller.console
 
 import zio.ZIO
 import zio.console._
-
 import dev.insideyou.playground.infrastructure.controller.console.CRUDOperation._
 import dev.insideyou.playground.infrastructure.controller.console.ConsoleMessageController.ConsoleApplicationEnvironment
+import dev.insideyou.playground.infrastructure.persistence.InMemoryMessageRepository
 
 object ConsoleUI {
-  val consoleUIProgram: ZIO[ConsoleApplicationEnvironment, Nothing, Int] =
+  lazy val consoleUIProgram: ZIO[zio.ZEnv, Nothing, Int] =
+    consoleUIMenu.provideCustomLayer(InMemoryMessageRepository.live)
+
+  val consoleUIMenu: ZIO[ConsoleApplicationEnvironment, Nothing, Int] =
     (for {
       _ <- putStrLn("Please select next operation to perform:")
       _ <- putStrLn(s"${Create.index} for Create") *> putStrLn(
@@ -27,11 +30,11 @@ object ConsoleUI {
             case _ =>
               dispatch(op)
                 .tapError(e => putStrLn(s"Failed with: $e"))
-                .flatMap(s => putStrLn(s"Succeeded with $s") *> consoleUIProgram)
-                .orElse(consoleUIProgram)
+                .flatMap(s => putStrLn(s"Succeeded with $s") *> consoleUIMenu)
+                .orElse(consoleUIMenu)
           }
         case None =>
-          putStrLn(s"$selection is not a valid selection, please try again!") *> consoleUIProgram
+          putStrLn(s"$selection is not a valid selection, please try again!") *> consoleUIMenu
       }
     } yield 0).tapError(e => putStrLn(s"Unexpected Failure $e")) orElse ZIO.succeed(1)
 

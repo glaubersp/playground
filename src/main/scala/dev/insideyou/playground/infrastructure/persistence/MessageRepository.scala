@@ -14,21 +14,20 @@ trait MessageRepository {
 
 object MessageRepository {
 
-  val live: ULayer[Has[MessageRepository]] =
-    ZLayer.succeed(InMemoryMessageRepositoryLive())
+  type MessageRepositoryEnvironment = Has[MessageRepository]
 
   def save(
       twitterMessage: Message
-    ): ZIO[Has[MessageRepository], PersistenceError, Message] =
+    ): ZIO[MessageRepositoryEnvironment, PersistenceError, Message] =
     ZIO.serviceWith(_.save(twitterMessage))
 
-  def get(id: String): ZIO[Has[MessageRepository], PersistenceError, Option[Message]] =
+  def get(id: String): ZIO[MessageRepositoryEnvironment, PersistenceError, Option[Message]] =
     ZIO.serviceWith(_.get(id))
 
-  def getAll: ZIO[Has[MessageRepository], PersistenceError, Seq[Message]] =
+  def getAll: ZIO[MessageRepositoryEnvironment, PersistenceError, Seq[Message]] =
     ZIO.serviceWith(_.getAll)
 
-  def delete(id: String): ZIO[Has[MessageRepository], PersistenceError, Option[Message]] =
+  def delete(id: String): ZIO[MessageRepositoryEnvironment, PersistenceError, Option[Message]] =
     ZIO.serviceWith(_.delete(id))
 
 }
