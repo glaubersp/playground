@@ -22,8 +22,8 @@ object WebUI {
   implicit def circeJsonEncoder[A](implicit decoder: Encoder[A]): EntityEncoder[Task, A] =
     jsonEncoderOf[Task, A]
 
-  lazy val webUIProgram: ZIO[WebApplicationEnvironment, Throwable, Unit] = ZIO
-    .runtime[WebApplicationEnvironment]
+  lazy val webUIProgram: ZIO[zio.ZEnv, Throwable, Unit] = ZIO
+    .runtime[ZEnv]
     .flatMap { implicit rts =>
       BlazeServerBuilder
         .apply[Task](singleThreadContext)
